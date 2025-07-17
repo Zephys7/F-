@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizSenpai - Crie e Jogue Jogos de Anime</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root { --primary-color: #6b4eff; --primary-hover: #5a3ddb; --dark-bg: #121212; --light-bg: #1e1e1e; --card-bg: #2c2c2c; --text-color: #eee; --text-muted: #aaa; --border-color: #444; --danger-color: #e74c3c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Nunito', sans-serif; background-color: var(--dark-bg); color: var(--text-color); }
+        .hidden { display: none !important; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+        a { color: inherit; text-decoration: none; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; gap: 20px; flex-wrap: wrap; }
+        .logo { font-size: 2rem; font-weight: 900; color: var(--primary-color); }
+        .search-bar { position: relative; flex-grow: 1; max-width: 500px; }
+        .search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        #searchInput { width: 100%; background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 15px 10px 40px; color: var(--text-color); font-family: 'Nunito', sans-serif; font-weight: 700; }
+        .nav-buttons { display: flex; align-items: center; gap: 15px; }
+        .btn { font-family: 'Nunito', sans-serif; font-weight: 700; border-radius: 10px; padding: 10px 25px; border: none; cursor: pointer; transition: background-color 0.2s; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: var(--card-bg); color: var(--text-color); }
+        header .btn { padding: 8px 20px; font-size: 0.9rem; }
+        .form-control { width: 100%; background-color: var(--card-bg); color: #eee; border: 1px solid #444; padding: 12px; border-radius: 8px; }
+        .hero { text-align: center; padding: 60px 20px 80px 20px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.2; }
+        .hero .highlight { color: var(--primary-color); }
+        .hero p { font-size: 1.2rem; color: var(--text-muted); margin: 20px auto 30px auto; max-width: 600px; }
+        .section { padding: 60px 0; border-top: 1px solid var(--border-color); }
+        .section-title { font-size: 2rem; font-weight: 700; text-align: center; margin-bottom: 40px; }
+        .how-it-works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .step-card { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; }
+        .step-card i { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; }
+        .step-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .step-card p { font-size: 0.9rem; color: var(--text-muted); }
+        .centered-cta { text-align: center; margin-top: 50px; }
+        .filter-buttons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; }
+        .filter-btn { background-color: var(--card-bg); font-weight: 700; border-radius: 30px; padding: 10px 25px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
+        .filter-btn.active { border-color: var(--primary-color); color: var(--primary-color); }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .game-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+        .game-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .game-card-thumb-wrapper { position: relative; }
+        .game-card-thumb { width: 100%; height: 180px; object-fit: cover; }
+        .category-tag { position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 900; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        .tag-anime { color: #3498db; } .tag-personagem { color: #f1c40f; } .tag-musica { color: #9b59b6; }
+        .game-card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .game-card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+        .game-card-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; }
+        .game-card-footer { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border-color); padding-top: 15px; }
+        .game-card-stats { display: flex; gap: 15px; }
+        .game-card-stats span { display: flex; align-items: center; gap: 5px; }
+        .game-card-actions { display: flex; gap: 10px; }
+        .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; transition: color 0.2s; }
+        .action-btn:hover { color: white; }
+        .action-btn.favorited { color: var(--danger-color); }
+        footer { text-align: center; padding: 40px 0; margin-top: 60px; border-top: 1px solid var(--border-color); color: var(--text-muted); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-content { background: var(--light-bg); padding: 30px; border-radius: 15px; width: 450px; max-width: 90vw; color: var(--text-color); box-shadow: 0 5px 20px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease; border-top: 4px solid var(--primary-color); }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        .login-options { display: flex; flex-direction: column; gap: 15px; }
+        .social-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
+        .social-btn i { margin-right: 10px; font-size: 1.2rem; }
+        .google-btn { background-color: #DB4437; color: white; }
+        .twitter-btn { background-color: #1DA1F2; color: white; }
+        .email-option-text { text-align: center; color: var(--text-muted); margin: 15px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <a href="index.html"><div class="logo">QuizSenpai</div></a>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="search" id="searchInput" data-i18n-key="searchPlaceholder">
+            </div>
+            <div class="nav-buttons">
+                <a href="criar-jogo.html" class="btn btn-secondary" data-i18n-key="createGame"></a>
+                <button id="loginBtn" class="btn btn-primary" data-i18n-key="loginRegister"></button>
+                <div id="userInfo" class="hidden" style="display: flex; align-items: center; gap: 15px;">
+                    <a href="perfil.html" id="welcomeMsg" style="font-weight: 700;"></a>
+                    <button id="logoutBtn" class="btn btn-secondary" data-i18n-key="logout"></button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <h1 data-i18n-key="heroTitle"></h1>
+                <p data-i18n-key="heroSubtitle"></p>
+                <a href="criar-jogo.html" class="btn btn-primary" data-i18n-key="heroCTA"></a>
+            </section>
+            
+            <section class="game-gallery section">
+                <h2 class="section-title" data-i18n-key="galleryTitle"></h2>
+                <div class="filter-buttons" id="filterButtons">
+                    <button class="filter-btn active" data-filter="all" data-i18n-key="filterAll"></button>
+                    <button class="filter-btn" id="favoritesFilterBtn" data-filter="favorites" data-i18n-key="filterFavorites" style="display: none;"></button>
+                    <button class="filter-btn" data-filter="anime" data-i18n-key="filterAnime"></button>
+                    <button class="filter-btn" data-filter="personagem" data-i18n-key="filterCharacter"></button>
+                    <button class="filter-btn" data-filter="musica" data-i18n-key="filterMusic"></button>
+                </div>
+                <div id="gameGrid" class="game-grid"></div>
+            </section>
+            
+            <section class="how-it-works section">
+                <h2 class="section-title" data-i18n-key="howItWorksTitle"></h2>
+                <div class="how-it-works-grid">
+                    <div class="step-card"><i class="fas fa-sliders-h"></i><h3 data-i18n-key="step1Title"></h3><p data-i18n-key="step1Desc"></p></div>
+                    <div class="step-card"><i class="fas fa-plus-square"></i><h3 data-i18n-key="step2Title"></h3><p data-i18n-key="step2Desc"></p></div>
+                    <div class="step-card"><i class="fas fa-rocket"></i><h3 data-i18n-key="step3Title"></h3><p data-i18n-key="step3Desc"></p></div>
+                </div>
+                <div class="centered-cta"><a href="criar-jogo.html" class="btn btn-primary" data-i18n-key="heroCTA"></a></div>
+            </section>
+        </main>
+
+        <footer><p>© 2025 QuizSenpai. Todos os direitos reservados.</p></footer>
+    </div>
+    
+    <div id="authModal" class="modal-overlay"></div>
+    <div id="reportModal" class="modal-overlay"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, TwitterAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, where } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBZedFa85SR4p-UQnyBGOUIYWN5grRL110",
+          authDomain: "sitequizzs.firebaseapp.com",
+          projectId: "sitequizzs",
+          storageBucket: "sitequizzs.appspot.com",
+          messagingSenderId: "1071901128617",
+          appId: "1:1071901128617:web:441ef50b3cde82af6776b8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const translations = {
+            en: { createGame: "Create Game", loginRegister: "Login / Register", logout: "Logout", heroTitle: "Create and Play<br>Anime <span class='highlight'>Games</span>", heroSubtitle: "Your ultimate platform to create, share, and play the best games from the otaku community.", heroCTA: "Start Creating Now", howItWorksTitle: "How It Works", step1Title: "1. Configure", step1Desc: "Choose the game mode, themes, and define the rules for your new game.", step2Title: "2. Add Options", step2Desc: "Populate your game with images or YouTube videos, one by one or with our random generator.", step3Title: "3. Publish", step3Desc: "Add the final details like a title and thumbnail, and share your creation with the world.", galleryTitle: "Featured Games", filterAll: "All", filterFavorites: "⭐ My Favorites", filterAnime: "Anime", filterCharacter: "Characters", filterMusic: "Music", searchPlaceholder: "Search games...", authTitle: "Access Your Account", authGoogle: "Continue with Google", authTwitter: "Continue with Twitter", authEmail: "Sign in with Email", reportTitle: "Report Game", reportDesc: "Help us keep the community safe. What's wrong with this game?", reasonInappropriate: "Inappropriate Content", reasonSpam: "Spam or Misleading", reasonHateful: "Hateful Content", reasonOther: "Other", placeholderReportDetails: "Provide more details (optional)...", buttonCancel: "Cancel", buttonSendReport: "Send Report" },
+            pt: { createGame: "Criar Jogo", loginRegister: "Login / Registrar", logout: "Sair", heroTitle: "Crie e Jogue<br>Jogos de <span class='highlight'>Anime</span>", heroSubtitle: "Sua plataforma definitiva para criar, compartilhar e jogar os melhores jogos da comunidade otaku.", heroCTA: "Começar a Criar Agora", howItWorksTitle: "Como Funciona", step1Title: "1. Configure", step1Desc: "Escolha o modo de jogo, temas e defina as regras para a sua nova criação.", step2Title: "2. Adicione Opções", step2Desc: "Popule seu jogo com imagens ou vídeos do YouTube, um por um ou com nosso gerador aleatório.", step3Title: "3. Publique", step3Desc: "Adicione os detalhes finais como um título e thumbnail, e compartilhe seu jogo com o mundo.", galleryTitle: "Jogos em Destaque", filterAll: "Todos", filterFavorites: "⭐ Meus Favoritos", filterAnime: "Animes", filterCharacter: "Personagens", filterMusic: "Música", searchPlaceholder: "Pesquisar jogos...", authTitle: "Acesse sua Conta", authGoogle: "Continuar com Google", authTwitter: "Continuar com Twitter", authEmail: "Entrar com E-mail", reportTitle: "Denunciar Jogo", reportDesc: "Ajude-nos a manter a comunidade segura. Qual o problema com este jogo?", reasonInappropriate: "Conteúdo Impróprio", reasonSpam: "Spam ou Enganoso", reasonHateful: "Conteúdo de Ódio", reasonOther: "Outro", placeholderReportDetails: "Forneça mais detalhes (opcional)...", buttonCancel: "Cancelar", buttonSendReport: "Enviar Denúncia" }
+        };
+
+        let currentLanguage = 'en';
+        let allGames = [];
+        let favorites = [];
+
+        function setLanguage(lang) {
+            if (!translations[lang]) return;
+            currentLanguage = lang;
+            document.querySelectorAll('[data-i18n-key]').forEach(el => {
+                const key = el.dataset.i18nKey;
+                if (translations[lang][key]) { el.innerHTML = translations[lang][key]; }
+            });
+            document.getElementById('searchInput').placeholder = translations[lang].searchPlaceholder;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+        }
+
+        function renderGames(filter = 'all', searchTerm = '') {
+            const gameGrid = document.getElementById('gameGrid');
+            gameGrid.innerHTML = '';
+            let gamesToRender = allGames;
+
+            if (filter === 'favorites') {
+                gamesToRender = gamesToRender.filter(game => favorites.includes(game.id));
+            } else if (filter !== 'all') {
+                gamesToRender = gamesToRender.filter(game => game.category === filter);
+            }
+
+            if (searchTerm) {
+                gamesToRender = gamesToRender.filter(game => game.title.toLowerCase().includes(searchTerm) || game.description.toLowerCase().includes(searchTerm));
+            }
+
+            gamesToRender.forEach(game => {
+                const isFavorited = favorites.includes(game.id);
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `<div class="game-card-thumb-wrapper"><img src="${game.thumbnail}" alt="${game.title}" class="game-card-thumb"><span class="category-tag tag-${game.category}">${game.category}</span></div><div class="game-card-body"><h3 class="game-card-title">${game.title}</h3><p class="game-card-desc">${game.description}</p><div class="game-card-footer"><div class="game-card-actions"><button title="Favoritar" class="action-btn favorite-btn ${isFavorited ? 'favorited' : ''}" data-game-id="${game.id}"><i class="fas fa-heart"></i></button><button title="Denunciar" class="action-btn report-btn" data-game-id="${game.id}"><i class="fas fa-flag"></i></button></div><div class="game-card-stats"><span><i class="fas fa-play"></i> ${formatNumber(game.plays)}</span><span><i class="fas fa-heart"></i> ${formatNumber(game.likes)}</span></div></div></div>`;
+                gameGrid.appendChild(card);
+            });
+
+            document.querySelectorAll('.favorite-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); if (auth.currentUser) { toggleFavorite(e.currentTarget.dataset.gameId); } else { alert('Você precisa estar logado para favoritar jogos!'); } }));
+            document.querySelectorAll('.report-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); openReportModal(e.currentTarget.dataset.gameId); }));
+        }
+
+        async function fetchAndRenderGames() {
+            try {
+                const q = query(collection(db, "quizzes"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                allGames = [];
+                querySnapshot.forEach((doc) => {
+                    allGames.push({ id: doc.id, ...doc.data() });
+                });
+                renderGames();
+            } catch (error) {
+                console.error("Erro ao buscar jogos:", error);
+                document.getElementById('gameGrid').innerHTML = "<p>Não foi possível carregar os jogos.</p>";
+            }
+        }
+
+        async function toggleFavorite(gameId) {
+            const user = auth.currentUser;
+            if (!user) return;
+            const userRef = doc(db, "users", user.uid);
+            const gameIndex = favorites.indexOf(gameId);
+            try {
+                if (gameIndex > -1) {
+                    favorites.splice(gameIndex, 1);
+                    await updateDoc(userRef, { favorites: arrayRemove(gameId) });
+                } else {
+                    favorites.push(gameId);
+                    await updateDoc(userRef, { favorites: arrayUnion(gameId) });
+                }
+                renderGames(document.querySelector('.filter-btn.active').dataset.filter, document.getElementById('searchInput').value.toLowerCase());
+            } catch (error) {
+                console.error("Erro ao atualizar favoritos:", error);
+            }
+        }
+
+        function formatNumber(num) { if (num >= 1000) { return (num / 1000).toFixed(1).replace('.0', '') + 'k'; } return num; }
+
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userInfo = document.getElementById('userInfo');
+        const welcomeMsg = document.getElementById('welcomeMsg');
+        const authModal = document.getElementById('authModal');
+        const favoritesFilterBtn = document.getElementById('favoritesFilterBtn');
+        const createGameBtn = document.querySelector('a[href="criar-jogo.html"]');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if(createGameBtn) createGameBtn.href = 'dashboard.html';
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    favorites = userSnap.data().favorites || [];
+                } else {
+                    await setDoc(userRef, { name: user.displayName, email: user.email, favorites: [] });
+                    favorites = [];
+                }
+                updateAuthState(true, user.displayName || user.email);
+                if (favoritesFilterBtn) favoritesFilterBtn.style.display = 'inline-block';
+            } else {
+                if(createGameBtn) createGameBtn.href = 'criar-jogo.html';
+                favorites = [];
+                updateAuthState(false);
+                if (favoritesFilterBtn) favoritesFilterBtn.style.display = 'none';
+            }
+            renderGames(document.querySelector('.filter-btn.active').dataset.filter, document.getElementById('searchInput').value.toLowerCase());
+        });
+
+        function updateAuthState(isLoggedIn, username = '') {
+            if (isLoggedIn) {
+                loginBtn.classList.add('hidden');
+                userInfo.classList.remove('hidden');
+                welcomeMsg.textContent = `Bem-vindo, ${username}!`;
+            } else {
+                loginBtn.classList.remove('hidden');
+                userInfo.classList.add('hidden');
+            }
+        }
+
+        logoutBtn.addEventListener('click', () => signOut(auth));
+        loginBtn.addEventListener('click', () => showAuthModal('login'));
+
+        function showAuthModal(initialState) { /* ... Lógica do modal de autenticação ... */ }
+
+        document.getElementById('filterButtons').addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                e.target.classList.add('active');
+                renderGames(e.target.dataset.filter, searchInput.value.toLowerCase());
+            }
+        });
+        searchInput.addEventListener('input', () => renderGames(document.querySelector('.filter-btn.active').dataset.filter, searchInput.value.toLowerCase()));
+
+        fetchAndRenderGames();
+    </script>
+</body>
+</html>
